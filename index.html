@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BurgerSync Ourinhos | Avaliação de Pedido</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍔</text></svg>">
+</head>
+<body>
+
+  <!-- Barra de Navegação -->
+  <header class="navbar">
+    <a href="index.html" class="brand">
+      <span class="brand-icon">🍔</span>
+      <span>BurgerSync</span>
+      <span class="brand-badge">Ourinhos</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link active">Avaliar Pedido</a>
+      <a href="admin.html" class="nav-btn">
+        <span>📊</span>
+        <span>Painel Gerente</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="container">
+    <section class="hero">
+      <h1>Conte como foi sua experiência!</h1>
+      <p>Sua avaliação é analisada em tempo real pela nossa inteligência artificial para aprimorar nossos hambúrgueres artesanais e atendimento em Ourinhos.</p>
+    </section>
+
+    <div style="max-width: 650px; margin: 0 auto;">
+      <div class="card">
+        <form id="feedbackForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="nome">Seu Nome *</label>
+              <input type="text" id="nome" class="form-input" placeholder="Ex: Mariana Souza" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contato">WhatsApp / Telefone *</label>
+              <input type="tel" id="contato" class="form-input" placeholder="(14) 99876-5432" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="pedido_id">Nº do Pedido</label>
+              <input type="text" id="pedido_id" class="form-input" placeholder="Ex: PED-7842 (opcional)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sua Nota Geral</label>
+              <div class="rating-container" id="starRating">
+                <button type="button" class="star-btn active" data-val="1">★</button>
+                <button type="button" class="star-btn active" data-val="2">★</button>
+                <button type="button" class="star-btn active" data-val="3">★</button>
+                <button type="button" class="star-btn active" data-val="4">★</button>
+                <button type="button" class="star-btn active" data-val="5">★</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="comentario">Seu Feedback Sincero *</label>
+            <textarea id="comentario" class="form-textarea" placeholder="Conte detalhes sobre o sabor, o ponto da carne, tempo de entrega, atendimento ou temperatura do pedido..." required></textarea>
+          </div>
+
+          <!-- Botões de Exemplo Rápido para Teste -->
+          <div style="margin-bottom: 1.25rem;">
+            <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">💡 Testar rapidamente com casos reais de Ourinhos:</span>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <button type="button" class="filter-btn" id="btnExPositivo">👍 Elogio (Positivo)</button>
+              <button type="button" class="filter-btn" id="btnExNeutro">😐 Sugestão (Neutro)</button>
+              <button type="button" class="filter-btn" id="btnExCritico">🚨 Reclamação (Crítico c/ Alerta)</button>
+            </div>
+          </div>
+
+          <button type="submit" id="btnSubmit" class="btn btn-primary">
+            <span>🚀 Enviar Avaliação para Análise</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Card de Resultado da IA em Tempo Real -->
+      <div id="resultCard" class="card" style="margin-top: 1.5rem; display: none; animation: slideIn 0.3s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>🤖</span>
+            <span>Análise da Experiência</span>
+          </h3>
+          <span id="resBadge" class="badge">Positivo</span>
+        </div>
+
+        <div id="resSummaryBox" class="feedback-body" style="margin-bottom: 1rem;">
+          <p id="resSummaryText">Resumo da análise</p>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Tags Detectadas:</span>
+          <div id="resTags" class="tags-list"></div>
+        </div>
+
+        <div id="resAlertBox" class="alert-banner" style="margin-bottom: 1rem; display: none;">
+          <div class="alert-banner-content">
+            <div class="alert-pulse-dot"></div>
+            <div>
+              <strong style="color: var(--critical); font-size: 0.85rem; display: block;">🚨 Alerta Crítico Acionado!</strong>
+              <span style="font-size: 0.8rem; color: var(--text-secondary);">Nossa gerência foi notificada imediatamente e entrará em contato para solucionar seu problema.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" id="btnNewFeedback" class="btn btn-secondary" style="flex: 1;">
+            Enviar Outra Avaliação
+          </button>
+          <a href="admin.html" class="btn btn-primary" style="flex: 1; text-decoration: none;">
+            Ver no Painel Geral 📊
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <footer>
+    <p>BurgerSync Ourinhos &copy; 2026 - Sistema de Feedback Inteligente &bull; Diretiva Layer 1 | Orquestração Layer 2 | Execução Layer 3</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

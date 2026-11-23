@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BurgerSync Ourinhos | Painel Administrativo</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+</head>
+<body>
+
+  <!-- Barra de Navegação Superior -->
+  <header class="navbar">
+    <a href="admin.html" class="brand">
+      <span class="brand-icon">🍔</span>
+      <span>BurgerSync</span>
+      <span class="brand-badge">Admin</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link">👈 Avaliação Pública</a>
+      <button type="button" id="btnOpenAlertsLog" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
+        <span>📜 Log de Alertas</span>
+      </button>
+      <button type="button" id="btnRefresh" class="nav-btn">
+        <span>🔄 Atualizar</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Container Principal -->
+  <main class="container">
+    
+    <!-- Banner de Alerta Crítico em Tempo Real -->
+    <div id="criticalAlertBanner" class="alert-banner" style="display: none;">
+      <div class="alert-banner-content">
+        <div class="alert-pulse-dot"></div>
+        <div>
+          <strong style="color: var(--critical); font-size: 1rem; display: block;">🚨 ATENÇÃO GERENCIAL: Avaliações Críticas Pendentes!</strong>
+          <span id="criticalAlertText" style="font-size: 0.85rem; color: var(--text-secondary);">Existem clientes aguardando contato urgente para resolução de problemas.</span>
+        </div>
+      </div>
+      <button type="button" id="btnFilterPendingCritical" class="btn btn-primary" style="background: var(--critical); color: #fff; width: auto; font-size: 0.8rem; padding: 0.4rem 0.85rem;">
+        Ver Críticos Pendentes
+      </button>
+    </div>
+
+    <!-- Grid de Métricas Principais -->
+    <section class="metrics-grid">
+      <div class="metric-card total">
+        <span class="metric-title">Total de Avaliações</span>
+        <span id="metricTotal" class="metric-value">0</span>
+        <span class="metric-sub">Coletadas no sistema</span>
+      </div>
+
+      <div class="metric-card positive">
+        <span class="metric-title">Taxa de Satisfação</span>
+        <span id="metricSatisfacao" class="metric-value">0%</span>
+        <span id="metricPositivosSub" class="metric-sub">0 avaliações positivas</span>
+      </div>
+
+      <div class="metric-card neutral">
+        <span class="metric-title">Avaliações Neutras</span>
+        <span id="metricNeutros" class="metric-value">0</span>
+        <span class="metric-sub">Sugestões e pontos de atenção</span>
+      </div>
+
+      <div class="metric-card critical">
+        <span class="metric-title">Críticas Pendentes</span>
+        <span id="metricCriticosPendentes" class="metric-value" style="color: var(--critical);">0</span>
+        <span id="metricCriticosTotal" class="metric-sub">de 0 críticas totais</span>
+      </div>
+    </section>
+
+    <!-- Barra de Filtros e Busca -->
+    <section class="filter-bar">
+      <!-- Filtro por Sentimento -->
+      <div class="filter-group">
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Sentimento:</span>
+        <button type="button" class="filter-btn active" data-filter-type="sentiment" data-value="todos">Todos</button>
+        <button type="button" class="filter-btn" data-filter-type="sentiment" data-value="Positivo">Positivos</button>
+        <button type="button" class="filter-btn" data-filter-type="sentiment" data-value="Neutro">Neutros</button>
+        <button type="button" class="filter-btn" data-filter-type="sentiment" data-value="Crítico">Críticos</button>
+      </div>
+
+      <!-- Filtro por Status da Tratativa -->
+      <div class="filter-group">
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Tratativa:</span>
+        <button type="button" class="filter-btn active" data-filter-type="status" data-value="todos">Todos</button>
+        <button type="button" class="filter-btn" data-filter-type="status" data-value="pendente">⏳ Pendentes</button>
+        <button type="button" class="filter-btn" data-filter-type="status" data-value="lido">✅ Tratadas</button>
+      </div>
+
+      <!-- Filtro por Tags -->
+      <div class="filter-group">
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Tag:</span>
+        <select id="selectTagFilter" class="form-select" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; width: auto;">
+          <option value="todas">Todas as Tags</option>
+          <option value="Sabor">Sabor</option>
+          <option value="Entrega">Entrega</option>
+          <option value="Atendimento">Atendimento</option>
+          <option value="Embalagem">Embalagem</option>
+          <option value="Temperatura">Temperatura</option>
+          <option value="Higiene">Higiene</option>
+        </select>
+      </div>
+
+      <!-- Caixa de Busca -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="form-input" placeholder="Buscar por cliente, pedido ou palavra...">
+      </div>
+    </section>
+
+    <!-- Lista de Feedbacks Estruturados -->
+    <section>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="font-size: 1.25rem; font-weight: 700;">Feedbacks Analisados</h2>
+        <span id="feedbackCounter" style="font-size: 0.85rem; color: var(--text-muted);">Exibindo 0 avaliações</span>
+      </div>
+
+      <div id="feedbackList" class="feedback-grid">
+        <!-- Itens inseridos dinamicamente via JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de Log de Alertas SMTP/Fallback (.tmp/alerts.log) -->
+  <div id="alertsModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🚨</span>
+          <span>Log Estruturado de Alertas (.tmp/alerts.log)</span>
+        </h3>
+        <button type="button" id="btnCloseModal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          Registros determinísticos de alertas gerenciais gerados automaticamente em crises operacionais (disparo SMTP ou fallback de contingência).
+        </p>
+        <pre id="logContent" class="log-content">Carregando registros...</pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnCloseModalFooter" class="btn btn-secondary">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <footer>
+    <p>BurgerSync Ourinhos &copy; 2026 - Painel Administrativo de Gestão e Tomada de Decisão Rápida</p>
+  </footer>
+
+  <script src="admin.js"></script>
+</body>
+</html>

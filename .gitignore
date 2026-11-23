@@ -1,0 +1,21 @@
+# Arquivos de Ambiente e Segurança
+.env
+.env.local
+
+# Ambientes Virtuais e Cache Python
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos Temporários de Execução
+.tmp/
+*.log
+
+# IDE e Sistema
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
